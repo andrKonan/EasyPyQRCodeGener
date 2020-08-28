@@ -1,11 +1,7 @@
 # EasyPyQRCodeGener
 ### Requirements
-In the programm there is `qrcode` and `Pillow` package that in the future will be replace with `pillow`.
+In the programm there is `qrcode` and `PyQt5` package.
 
-For install you need to execute this `pip3 install --upgrade qrcode Pillow` in your command line.
+For install you need to execute this `pip3 install --upgrade qrcode PyQt5` in your command line.
 ### Description
-Using `main.py` you can start a programm that can generate a QR code that will save in the same folder as programm and display on the screen.
-### Screenshots
-This is how programm looks like on start
-
-![Programm on start](https://github.com/andrKonan/EasyPyQRCodeGener/blob/master/screenshots/start.png)
+Using `main.py` you can start a programm that can generate a QR code that will save in the same folder as programm with name 'qr.png' and display on the screen.
