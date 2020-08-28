@@ -1,59 +1,50 @@
+import sys, io
+
 import qrcode
-import tkinter as tk
-from PIL import ImageTk, Image
 
-window = tk.Tk()
-window.title("QR code generator") 
-window.minsize(200, 200)
+from PyQt5.QtWidgets import QApplication, QWidget, QGridLayout, QLabel, QLineEdit
+from PyQt5.QtCore import Qt, QSize, QRect
+from PyQt5.QtGui import QIcon, QPixmap
 
-txtAndInputFrame = tk.Frame(master = window, height = 10)
-txtAndInputFrame.pack(fill = tk.X)
+from PIL import Image
 
-explainingText = tk.Label(master = txtAndInputFrame, text="Text for converting to QR:")
-textEntryToQR = tk.Entry(master = txtAndInputFrame, width = 50)
-qrImg = tk.Canvas(width = 350, height = 350)  
+class MainWindow(QWidget):
+    def __init__(self, pathToImage = "qr.png"):
+        super().__init__()
 
-explainingText.pack(side = tk.LEFT, anchor = tk.NW)
-textEntryToQR.pack(side = tk.RIGHT, anchor = tk.NE, fill = tk.X)
-qrImg.pack(side = tk.BOTTOM, anchor = tk.S)
+        self.setWindowTitle('QR code generator')
 
-prevText = textEntryToQR.get()
+        self.resize(320, 240)
+        self.setMinimumSize(QSize(320, 240))
 
-def makeQR(text:str):
-	qrcode.make(text).save('qr.png')
-	img = Image.open('qr.png')
-	size = img.size
-	img = ImageTk.PhotoImage(img)
-	return (img, size)
+        self.pathToImage = pathToImage
+        self.initUI()
 
-img, size = makeQR(textEntryToQR.get())
-qrImg.config(width = size[0], height = size[1])
-qrImg.create_image(0, 0, anchor = tk.NW, image = img)  
-prevText = textEntryToQR.get()
+    def initUI(self):
+        grid = QGridLayout(self)
+        grid.setSpacing(5)
 
-window.update_idletasks()
-window.update()
+        qrTextInput = QLineEdit()
+        qrTextInput.textChanged.connect(self.generateQR)
+        qrImage = QLabel()
+        qrImage.setPixmap(QPixmap(self.pathToImage))
+        qrImage.setScaledContents(True)
 
-run = True
-while run:
-	try:
-		nowText = textEntryToQR.get()
-	except:
-		run = False
-		break
-		
-	if prevText != textEntryToQR.get() and len(textEntryToQR.get()) <= 2048:
-		img, size = makeQR(textEntryToQR.get())
-		qrImg.config(width = size[0], height = size[1])
-		qrImg.create_image(0, 0, anchor = tk.NW, image = img)
-		window.iconphoto(False, img)
-		window.minsize(size[0], window.winfo_height())
-		prevText = textEntryToQR.get()
-	
-	elif prevText != textEntryToQR.get() and len(textEntryToQR.get()) > 2048:
-		tmp = textEntryToQR.get()[-1]
-		textEntryToQR.delete(0)
-		textEntryToQR.insert(0, tmp)
-	
-	window.update_idletasks()
-	window.update()
+        grid.addWidget(qrTextInput, 0, 0)
+        grid.addWidget(qrImage, 1, 0)
+
+        self.setLayout(grid)
+
+        self.show()
+
+    def generateQR(self, text):
+        qrcode.make(text).save(self.pathToImage)
+
+        label = self.findChildren(QLabel)[0]
+        label.setPixmap(QPixmap(self.pathToImage))
+
+app = QApplication(sys.argv)
+
+window = MainWindow()
+
+app.exec_()
