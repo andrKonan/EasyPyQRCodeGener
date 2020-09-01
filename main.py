@@ -5,14 +5,22 @@ import qrcode
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QWidget, QGridLayout, QLabel, QLineEdit
 
+class windowSize():
+    def __init__(self, x, y):
+        self.x = int(x)
+        self.y = int(y)
+
+    def getQSize(self):
+        return QtCore.QSize(self.x, self.y)
+
 class MainWindow(QtWidgets.QWidget):
     def __init__(self, textInputObjName = "textInput", qrObjName = "QRImage", errCorrectionSliderObjName = "errCorrectionSlider", errCorrectionStateObjName = "errCorrectionLabel", boxSizeSliderObjName = "boxSizeSlider", boxSizeStateObjName = "boxSizeLabel", borderSizeSliderObjName = "borderSizeSlider", borderSizeStateObjName = "borderSizeState"):
         super().__init__()
 
         self.setWindowTitle('QR code generator')
-
-        self.resize(320, 380)
-        self.setMinimumSize(QtCore.QSize(320, 380))
+        self.minSize = windowSize(320, 400)
+        self.resize(self.minSize.x, self.minSize.y)
+        self.setMinimumSize(self.minSize.getQSize())
 
         self.textInputObjName = textInputObjName
         self.qrObjName = qrObjName
