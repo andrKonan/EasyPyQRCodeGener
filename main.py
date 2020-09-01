@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, io
 
 import qrcode
 
@@ -42,42 +42,14 @@ class MainWindow(QtWidgets.QWidget):
         self.generateQR("")
 
     def generateQR(self, text):
-        try:
-            qrcode.make(text).save(self.pathToImage)
-
-            label = self.findChildren(QtWidgets.QLabel)[0]
-            label.setPixmap(QtGui.QPixmap(self.pathToImage))
-        except OSError:
-            self.permissionDenied()
-
-    class errorPermissionDeniedMessage(QtWidgets.QWidget):
-        def __init__(self, parent, pathToImage):
-            super().__init__()
-
-            self.pathToImage = pathToImage
-
-            self.setWindowTitle('QR code generator: ERROR')
-            self.setMinimumSize(QtCore.QSize(440, 100))
-
-            self.initUI()
-
-        def initUI(self):
-            grid = QtWidgets.QGridLayout(self)
-            grid.setSpacing(5)
-
-            errorMessageLabel = QtWidgets.QLabel("Error: permissions denied. Can't write to file:\"" + self.pathToImage + "\"")
-            errorMessageLabel.setAlignment(QtCore.Qt.AlignCenter)
-
-            grid.addWidget(errorMessageLabel, 0, 0)
-
-            self.show()
-
-        def closeEvent(self, event):
-            sys.exit(-1)
-
-    def permissionDenied(self):
-        self.errorMessage = self.errorPermissionDeniedMessage(self, self.pathToImage)
-        self.errorMessage.show()
+        with io.BytesIO() as f:
+            im = qrcode.make(text)
+            im.save(f, format='png')
+            f.seek(0)
+            img = f.read()
+            img = QtGui.QPixmap.fromImage(QtGui.QImage.fromData(img))
+        label = self.findChildren(QtWidgets.QLabel)[0]
+        label.setPixmap(img)
 
 app = QtWidgets.QApplication(sys.argv)
 
