@@ -15,13 +15,9 @@ class WindowSize():
         return QtCore.QSize(self.x, self.y)
 
 
-def make_slider(orientation="h",
-                range=(0, 100),
-                single_step=1,
-                page_step=5,
-                slider_position=0,
-                tick_position=-1,
-                tick_interval=-1):
+def make_slider(
+        orientation="h", slider_range=(0, 100), single_step=1,
+        page_step=5, slider_position=0, tick_position=-1, tick_interval=-1):
     tick_pos_minmax = {
         "nt": QtWidgets.QSlider.NoTicks,
         "tbs": QtWidgets.QSlider.TicksBothSides
@@ -34,7 +30,7 @@ def make_slider(orientation="h",
         slider = QtWidgets.QSlider(QtCore.Qt.Vertical)
     elif not orientation == QtCore.Qt.Horizontal or QtCore.Qt.Vertical:
         return -1
-    slider.setRange(range[0], range[1])
+    slider.setRange(slider_range[0], slider_range[1])
     slider.setSingleStep(single_step)
     slider.setPageStep(page_step)
     slider.setSliderPosition(slider_position)
@@ -50,9 +46,9 @@ class MainWindow(QtWidgets.QWidget):
         super().__init__()
 
         self.setWindowTitle('QR code generator')
-        self.minSize = WindowSize(320, 440)
-        self.resize(self.minSize.x, self.minSize.y)
-        self.setMinimumSize(self.minSize.get_qsize())
+        self.minimum_size = WindowSize(320, 440)
+        self.resize(self.minimum_size.x, self.minimum_size.y)
+        self.setMinimumSize(self.minimum_size.get_qsize())
 
         try:
             kwargs.get("")
@@ -60,42 +56,34 @@ class MainWindow(QtWidgets.QWidget):
             sys.exit(-1)
 
         self.textInputObjName = kwargs.get(
-            "textInputObjName",
-            "textInput"
+            "textInputObjName", "textInput"
         )
         self.qrObjName = kwargs.get(
-            "qrObjName",
-            "QRImage"
+            "qrObjName", "QRImage"
         )
 
         self.errCorrectionSliderObjName = kwargs.get(
-            "errCorrectionSliderObjName",
-            "errCorrectionSlider"
+            "errCorrectionSliderObjName", "errCorrectionSlider"
         )
 
         self.errCorrectionStateObjName = kwargs.get(
-            "errCorrectionStateObjName",
-            "errCorrectionLabel"
+            "errCorrectionStateObjName", "errCorrectionLabel"
         )
 
         self.boxSizeSliderObjName = kwargs.get(
-            "boxSizeSliderObjName",
-            "boxSizeSlider"
+            "boxSizeSliderObjName", "boxSizeSlider"
         )
 
         self.boxSizeStateObjName = kwargs.get(
-            "boxSizeStateObjName",
-            "boxSizeLabel"
+            "boxSizeStateObjName", "boxSizeLabel"
         )
 
         self.borderSizeSliderObjName = kwargs.get(
-            "borderSizeSliderObjName",
-            "borderSizeSlider"
+            "borderSizeSliderObjName", "borderSizeSlider"
         )
 
         self.borderSizeStateObjName = kwargs.get(
-            "borderSizeStateObjName",
-            "borderSizeState"
+            "borderSizeStateObjName", "borderSizeState"
         )
 
         self.init_ui()
@@ -114,7 +102,7 @@ class MainWindow(QtWidgets.QWidget):
 
         qr_error_correction_slider = make_slider(
             orientation="h",
-            range=(0, 3),
+            slider_range=(0, 3),
             slider_position=1,
             tick_position=QtWidgets.QSlider.TicksBothSides,
             tick_interval=1
@@ -137,7 +125,7 @@ class MainWindow(QtWidgets.QWidget):
 
         box_size_slider = make_slider(
             orientation="h",
-            range=(1, 50),
+            slider_range=(1, 50),
             single_step=5,
             page_step=15,
             slider_position=10,
@@ -164,7 +152,7 @@ class MainWindow(QtWidgets.QWidget):
 
         border_size_slider = make_slider(
             orientation="h",
-            range=(0, 4),
+            slider_range=(0, 4),
             single_step=2 // self.border_size_state_multiplier,
             page_step=2 // self.border_size_state_multiplier,
             slider_position=4 // self.border_size_state_multiplier,
@@ -231,15 +219,15 @@ class MainWindow(QtWidgets.QWidget):
 
         self.update_settings_and_qr()
 
-    def get_error_correction_level(self, value, type="number"):
-        if type == "number":
+    def get_error_correction_level(self, value, return_object="number"):
+        if return_object == "number":
             return {
                 0: qrcode.constants.ERROR_CORRECT_L,
                 1: qrcode.constants.ERROR_CORRECT_M,
                 2: qrcode.constants.ERROR_CORRECT_Q,
                 3: qrcode.constants.ERROR_CORRECT_H
             }.get(value, qrcode.constants.ERROR_CORRECT_M)
-        if type == "char":
+        if return_object == "char":
             return {
                 qrcode.constants.ERROR_CORRECT_L: "L",
                 qrcode.constants.ERROR_CORRECT_M: "M",
@@ -257,7 +245,7 @@ class MainWindow(QtWidgets.QWidget):
                     QtWidgets.QSlider,
                     self.errCorrectionSliderObjName
                 )[0].sliderPosition(),
-                type="char"
+                return_object="char"
             )
         )
 
@@ -310,14 +298,18 @@ class MainWindow(QtWidgets.QWidget):
             QtWidgets.QSlider,
             self.borderSizeSliderObjName
         )[0].sliderPosition() * self.border_size_state_multiplier
-        with io.BytesIO() as f:
+        with io.BytesIO() as virtual_file:
             qrcode.make(
                 text,
                 error_correction=error_correction_level,
                 box_size=box_size,
-                border=border_size).save(f, format="png")
-            f.seek(0)
-            img = f.read()
+                border=border_size
+            ).save(
+                virtual_file,
+                format="png"
+            )
+            virtual_file.seek(0)
+            img = virtual_file.read()
             img = QtGui.QPixmap.fromImage(QtGui.QImage.fromData(img))
         label = self.findChildren(QtWidgets.QLabel, self.qrObjName)[0]
         label.setPixmap(img)
@@ -327,4 +319,4 @@ app = QtWidgets.QApplication(sys.argv)
 
 window = MainWindow()
 
-app.exec_()()
+app.exec_()
