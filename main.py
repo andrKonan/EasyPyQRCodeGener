@@ -15,7 +15,7 @@ class WindowSize():
         return QtCore.QSize(self.x, self.y)
 
 
-def make_slider(orientation="h", range=(0, 100), singleStep=1, pageStep=5, sliderPosition=0, tickPosition=-1, tickInterval=-1):
+def make_slider(orientation="h", range=(0, 100), single_step=1, page_step=5, slider_position=0, tick_position=-1, tick_interval=-1):
     if isinstance(orientation, str):
         orientation = orientation.lower()
     if orientation in ["h", "horizontal", "-"]:
@@ -25,13 +25,13 @@ def make_slider(orientation="h", range=(0, 100), singleStep=1, pageStep=5, slide
     elif not orientation == QtCore.Qt.Horizontal or QtCore.Qt.Vertical:
         return -1
     slider.setRange(range[0], range[1])
-    slider.setSingleStep(singleStep)
-    slider.setPageStep(pageStep)
-    slider.setSliderPosition(sliderPosition)
-    if QtWidgets.QSlider.NoTicks <= tickPosition <= QtWidgets.QSlider.TicksBothSides:
-        slider.setTickPosition(tickPosition)
-    if tickInterval > 0:
-        slider.setTickInterval(tickInterval)
+    slider.setSingleStep(single_step)
+    slider.setPageStep(page_step)
+    slider.setSliderPosition(slider_position)
+    if QtWidgets.QSlider.NoTicks <= tick_position <= QtWidgets.QSlider.TicksBothSides:
+        slider.setTickPosition(tick_position)
+    if tick_interval > 0:
+        slider.setTickInterval(tick_interval)
     return slider
 
 
@@ -72,7 +72,7 @@ class MainWindow(QtWidgets.QWidget):
         qr_image.setScaledContents(True)
         qr_image.setObjectName(self.qrObjName)
 
-        qr_error_correction_slider = make_slider(orientation = "h", range = (0, 3), sliderPosition = 1, tickPosition = QtWidgets.QSlider.TicksBothSides, tickInterval = 1)
+        qr_error_correction_slider = make_slider(orientation="h", range=(0, 3), slider_position=1, tick_position=QtWidgets.QSlider.TicksBothSides, tick_interval=1)
         qr_error_correction_slider.valueChanged.connect(self.update_settings_and_qr)
         qr_error_correction_slider.setObjectName(self.errCorrectionSliderObjName)
 
@@ -81,7 +81,7 @@ class MainWindow(QtWidgets.QWidget):
 
         qr_error_correction_level_label = QtWidgets.QLabel("Error correction level")
 
-        box_size_slider = make_slider(orientation = "h", range = (1, 50), singleStep = 5, pageStep = 15, sliderPosition = 10, tickPosition = QtWidgets.QSlider.TicksBothSides, tickInterval = 5)
+        box_size_slider = make_slider(orientation="h", range=(1, 50), single_step=5, page_step=15, slider_position=10, tick_position=QtWidgets.QSlider.TicksBothSides, tick_interval=5)
         box_size_slider.valueChanged.connect(self.update_settings_and_qr)
         box_size_slider.setObjectName(self.boxSizeSliderObjName)
 
@@ -92,7 +92,7 @@ class MainWindow(QtWidgets.QWidget):
 
         self.border_size_state_multiplier = 2
 
-        border_size_slider = make_slider(orientation = "h", range = (0, 4), singleStep = 2 // self.border_size_state_multiplier, pageStep = 2 // self.border_size_state_multiplier, sliderPosition = 4 // self.border_size_state_multiplier, tickPosition = QtWidgets.QSlider.TicksBothSides, tickInterval = 2 // self.border_size_state_multiplier)
+        border_size_slider = make_slider(orientation="h", range=(0, 4), single_step=2 // self.border_size_state_multiplier, page_step=2 // self.border_size_state_multiplier, slider_position=4 // self.border_size_state_multiplier, tick_position=QtWidgets.QSlider.TicksBothSides, tick_interval=2 // self.border_size_state_multiplier)
         border_size_slider.valueChanged.connect(self.update_settings_and_qr)
         border_size_slider.setObjectName(self.borderSizeSliderObjName)
 
@@ -140,7 +140,7 @@ class MainWindow(QtWidgets.QWidget):
             }.get(self.get_error_correction_level(value), "M")
 
     def update_settings_and_qr(self, *args, **kwargs):
-        self.findChildren(QtWidgets.QLabel, self.errCorrectionStateObjName)[0].setText(self.get_error_correction_level(self.findChildren(QtWidgets.QSlider, self.errCorrectionSliderObjName)[0].sliderPosition(), type = "char"))
+        self.findChildren(QtWidgets.QLabel, self.errCorrectionStateObjName)[0].setText(self.get_error_correction_level(self.findChildren(QtWidgets.QSlider, self.errCorrectionSliderObjName)[0].sliderPosition(), type="char"))
         self.findChildren(QtWidgets.QLabel, self.boxSizeStateObjName)[0].setText(str(self.findChildren(QtWidgets.QSlider, self.boxSizeSliderObjName)[0].sliderPosition()))
         self.findChildren(QtWidgets.QLabel, self.borderSizeStateObjName)[0].setText(str(self.findChildren(QtWidgets.QSlider, self.borderSizeSliderObjName)[0].sliderPosition() * self.border_size_state_multiplier))
         self.generate_qr()
