@@ -37,7 +37,7 @@ class MainWindow(QtWidgets.QWidget):
         super().__init__()
 
         self.setWindowTitle('QR code generator')
-        self.minSize = windowSize(320, 400)
+        self.minSize = windowSize(320, 440)
         self.resize(self.minSize.x, self.minSize.y)
         self.setMinimumSize(self.minSize.getQSize())
 
