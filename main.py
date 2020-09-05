@@ -16,8 +16,14 @@ class WindowSize():
 
 
 def make_slider(
-        orientation="h", slider_range=(0, 100), single_step=1,
-        page_step=5, slider_position=0, tick_position=-1, tick_interval=-1):
+    orientation="h",
+    slider_range=(0, 100),
+    single_step=1,
+    page_step=5,
+    slider_position=0,
+    tick_position=-1,
+    tick_interval=-1
+):
     tick_pos_minmax = {
         "nt": QtWidgets.QSlider.NoTicks,
         "tbs": QtWidgets.QSlider.TicksBothSides
@@ -55,12 +61,8 @@ class MainWindow(QtWidgets.QWidget):
         except AttributeError:
             sys.exit(-1)
 
-        self.textInputObjName = kwargs.get(
-            "textInputObjName", "textInput"
-        )
-        self.qrObjName = kwargs.get(
-            "qrObjName", "QRImage"
-        )
+        self.textInputObjName = kwargs.get("textInputObjName", "textInput")
+        self.qrObjName = kwargs.get("qrObjName", "QRImage")
 
         self.errCorrectionSliderObjName = kwargs.get(
             "errCorrectionSliderObjName", "errCorrectionSlider"
@@ -132,21 +134,13 @@ class MainWindow(QtWidgets.QWidget):
             tick_position=QtWidgets.QSlider.TicksBothSides,
             tick_interval=5
         )
-        box_size_slider.valueChanged.connect(
-            self.update_settings_and_qr
-        )
-        box_size_slider.setObjectName(
-            self.boxSizeSliderObjName
-        )
+        box_size_slider.valueChanged.connect(self.update_settings_and_qr)
+        box_size_slider.setObjectName(self.boxSizeSliderObjName)
 
         box_size_state_label = QtWidgets.QLabel()
-        box_size_state_label.setObjectName(
-            self.boxSizeStateObjName
-        )
+        box_size_state_label.setObjectName(self.boxSizeStateObjName)
 
-        box_size_label = QtWidgets.QLabel(
-            "Image resolution"
-        )
+        box_size_label = QtWidgets.QLabel("Image resolution")
 
         self.border_size_state_multiplier = 2
 
@@ -159,60 +153,30 @@ class MainWindow(QtWidgets.QWidget):
             tick_position=QtWidgets.QSlider.TicksBothSides,
             tick_interval=2 // self.border_size_state_multiplier
         )
-        border_size_slider.valueChanged.connect(
-            self.update_settings_and_qr
-        )
-        border_size_slider.setObjectName(
-            self.borderSizeSliderObjName
-        )
+        border_size_slider.valueChanged.connect(self.update_settings_and_qr)
+        border_size_slider.setObjectName(self.borderSizeSliderObjName)
 
         border_size_state_label = QtWidgets.QLabel()
-        border_size_state_label.setObjectName(
-            self.borderSizeStateObjName
-        )
+        border_size_state_label.setObjectName(self.borderSizeStateObjName)
 
-        border_size_label = QtWidgets.QLabel(
-            "Border size"
-        )
+        border_size_label = QtWidgets.QLabel("Border size")
 
         column = 0
-        grid.addWidget(
-            qr_text_input, column, 0, 1, -1
-        )
+        grid.addWidget(qr_text_input, column, 0, 1, -1)
         column += 1
-        grid.addWidget(
-            qr_error_correction_level_label, column, 0, 1, 2
-        )
-        grid.addWidget(
-            qr_error_correction_slider, column, 3
-        )
-        grid.addWidget(
-            qr_error_correction_state_label, column, 4
-        )
+        grid.addWidget(qr_error_correction_level_label, column, 0, 1, 2)
+        grid.addWidget(qr_error_correction_slider, column, 3)
+        grid.addWidget(qr_error_correction_state_label, column, 4)
         column += 1
-        grid.addWidget(
-            box_size_label, column, 0, 1, 2
-        )
-        grid.addWidget(
-            box_size_slider, column, 3
-        )
-        grid.addWidget(
-            box_size_state_label, column, 4
-        )
+        grid.addWidget(box_size_label, column, 0, 1, 2)
+        grid.addWidget(box_size_slider, column, 3)
+        grid.addWidget(box_size_state_label, column, 4)
         column += 1
-        grid.addWidget(
-            border_size_label, column, 0, 1, 2
-        )
-        grid.addWidget(
-            border_size_slider, column, 3
-        )
-        grid.addWidget(
-            border_size_state_label, column, 4
-        )
+        grid.addWidget(border_size_label, column, 0, 1, 2)
+        grid.addWidget(border_size_slider, column, 3)
+        grid.addWidget(border_size_state_label, column, 4)
         column += 1
-        grid.addWidget(
-            qr_image, column, 0, 4, -1
-        )
+        grid.addWidget(qr_image, column, 0, 4, -1)
 
         self.setLayout(grid)
         self.show()
@@ -236,67 +200,58 @@ class MainWindow(QtWidgets.QWidget):
             }.get(self.get_error_correction_level(value), "M")
 
     def update_settings_and_qr(self, *args, **kwargs):
-        self.findChildren(
-            QtWidgets.QLabel,
-            self.errCorrectionStateObjName
-        )[0].setText(
-            self.get_error_correction_level(
-                self.findChildren(
-                    QtWidgets.QSlider,
-                    self.errCorrectionSliderObjName
-                )[0].sliderPosition(),
-                return_object="char"
-            )
-        )
+        self.findChildren(QtWidgets.QLabel,
+                          self.errCorrectionStateObjName)[0].setText(
+                              self.get_error_correction_level(
+                                  self.findChildren(
+                                      QtWidgets.QSlider,
+                                      self.errCorrectionSliderObjName
+                                  )[0].sliderPosition(),
+                                  return_object="char"
+                              )
+                          )
 
-        self.findChildren(
-            QtWidgets.QLabel,
-            self.boxSizeStateObjName
-        )[0].setText(
-            str(
-                self.findChildren(
-                    QtWidgets.QSlider,
-                    self.boxSizeSliderObjName
-                )[0].sliderPosition()
-            )
-        )
+        self.findChildren(QtWidgets.QLabel,
+                          self.boxSizeStateObjName)[0].setText(
+                              str(
+                                  self.findChildren(
+                                      QtWidgets.QSlider,
+                                      self.boxSizeSliderObjName
+                                  )[0].sliderPosition()
+                              )
+                          )
 
-        self.findChildren(
-            QtWidgets.QLabel,
-            self.borderSizeStateObjName
-        )[0].setText(
-            str(
-                self.findChildren(
-                    QtWidgets.QSlider,
-                    self.borderSizeSliderObjName
-                )[0].sliderPosition() * self.border_size_state_multiplier
-            )
-        )
+        self.findChildren(QtWidgets.QLabel,
+                          self.borderSizeStateObjName)[0].setText(
+                              str(
+                                  self.findChildren(
+                                      QtWidgets.QSlider,
+                                      self.borderSizeSliderObjName
+                                  )[0].sliderPosition() *
+                                  self.border_size_state_multiplier
+                              )
+                          )
 
         self.generate_qr()
 
     def generate_qr(self, text=""):
         if text == "":
             text = self.findChildren(
-                QtWidgets.QLineEdit,
-                self.textInputObjName
+                QtWidgets.QLineEdit, self.textInputObjName
             )[0].text()
 
         error_correction_level = self.get_error_correction_level(
             self.findChildren(
-                QtWidgets.QSlider,
-                self.errCorrectionSliderObjName
+                QtWidgets.QSlider, self.errCorrectionSliderObjName
             )[0].sliderPosition()
         )
 
         box_size = self.findChildren(
-            QtWidgets.QSlider,
-            self.boxSizeSliderObjName
+            QtWidgets.QSlider, self.boxSizeSliderObjName
         )[0].sliderPosition()
 
         border_size = self.findChildren(
-            QtWidgets.QSlider,
-            self.borderSizeSliderObjName
+            QtWidgets.QSlider, self.borderSizeSliderObjName
         )[0].sliderPosition() * self.border_size_state_multiplier
         with io.BytesIO() as virtual_file:
             qrcode.make(
@@ -304,10 +259,7 @@ class MainWindow(QtWidgets.QWidget):
                 error_correction=error_correction_level,
                 box_size=box_size,
                 border=border_size
-            ).save(
-                virtual_file,
-                format="png"
-            )
+            ).save(virtual_file, format="png")
             virtual_file.seek(0)
             img = virtual_file.read()
             img = QtGui.QPixmap.fromImage(QtGui.QImage.fromData(img))
